@@ -55,7 +55,7 @@ public class CalendarioEventos {
     /**
      * 
      */
-    public int indiceInsercion(Evento eventoA) {
+    private int indiceInsercion(Evento eventoA) {
         for (int i = 0; i < calendario.get(eventoA.getMes()).size(); i++){
             Evento eventoB = calendario.get(eventoA.getMes()).get(i);
             if(eventoA.antesDe(eventoB)){
@@ -91,7 +91,9 @@ public class CalendarioEventos {
      * Si el mes no existe se devuelve 0
      */
     public int totalEventosEnMes(Mes mes) {
-
+        if(calendario.containsKey(mes)){
+            return calendario.get(mes).size();
+        }
         return 0;
     }
 
@@ -102,8 +104,32 @@ public class CalendarioEventos {
      *  
      */
     public TreeSet<Mes> mesesConMasEventos() {
+        TreeSet<Mes> meses = new TreeSet<>();
+        Set<Mes> keys = calendario.keySet();
+        Iterator<Mes> it = keys.iterator();
+        while(it.hasNext()){
+            Mes key = it.next();
+            if(totalEventosEnMes(key) == maxEventos()){
+                meses.add(key);
+            }
+        }
+        return meses;
+    }
 
-        return null;
+    /**
+     * 
+     */
+    private int maxEventos() {
+        int max = 0;
+        Set<Mes> keys = calendario.keySet();
+        Iterator<Mes> it = keys.iterator();
+        while(it.hasNext()){
+            Mes key = it.next();
+            if(totalEventosEnMes(key) > max){
+                max = totalEventosEnMes(key);
+            }
+        }
+        return max;
     }
 
     /**
@@ -111,10 +137,37 @@ public class CalendarioEventos {
      * Se devuelve uno solo (el primero encontrado) aunque haya varios
      */
     public String eventoMasLargo() {
-
+        Set<Map.Entry<Mes, ArrayList<Evento>>> entradas = calendario.entrySet();
+        Iterator<Map.Entry<Mes, ArrayList<Evento>>> it = entradas.iterator();
+        while(it.hasNext()){
+            Map.Entry<Mes, ArrayList<Evento>> entrada = it.next();
+            for(Evento evento: entrada.getValue()){
+                if(evento.getDuracion() == maxDuración()){
+                    return evento.getNombre();
+                }
+            }
+        }
         return null;
     }
-
+    
+    /**
+     * 
+     */
+    private int maxDuración() {
+        int max = 0;
+        Set<Map.Entry<Mes, ArrayList<Evento>>> entradas = calendario.entrySet();
+        Iterator<Map.Entry<Mes, ArrayList<Evento>>> it = entradas.iterator();
+        while(it.hasNext()){
+            Map.Entry<Mes, ArrayList<Evento>> entrada = it.next();
+            for(Evento evento: entrada.getValue()){
+                if(evento.getDuracion() > max){
+                    max = evento.getDuracion();
+                }
+            }
+        }
+        return max;
+    }
+    
     /**
      * Borrar del calendario todos los eventos de los meses indicados en el array
      * y que tengan lugar el día de la semana proporcionado (se entiende día de la
@@ -125,8 +178,22 @@ public class CalendarioEventos {
      * completa del map
      */
     public int cancelarEventos(Mes[] meses, int dia) {
-
-        return 0;
+        int borrados = 0; 
+        for (int i = 0; i < meses.length; i++){
+            if(calendario.containsKey(meses[i])){
+                ArrayList<Evento> eventos = calendario.get(meses[i]);
+                for(int j = eventos.size() - 1; j >= 0; j--){
+                    if (eventos.get(j).getDia() == dia){
+                        eventos.remove(eventos.get(j));
+                        borrados++;
+                    }
+                }
+                if (eventos.isEmpty()){
+                    calendario.remove(meses[i]);
+                }
+            }
+        }
+        return borrados;
     }
 
     /**
@@ -139,29 +206,29 @@ public class CalendarioEventos {
 
         System.out.println();
 
-        // Mes mes = Mes.FEBRERO;
-        // System.out.println("Eventos en " + mes + " = "
-            // + calendario.totalEventosEnMes(mes));
-        // mes = Mes.MARZO;
-        // System.out.println("Eventos en " + mes + " = "
-            // + calendario.totalEventosEnMes(mes));
-        // System.out.println("Mes/es con más eventos "
-            // + calendario.mesesConMasEventos());
+        Mes mes = Mes.FEBRERO;
+        System.out.println("Eventos en " + mes + " = "
+        + calendario.totalEventosEnMes(mes));
+        mes = Mes.MARZO;
+        System.out.println("Eventos en " + mes + " = "
+        + calendario.totalEventosEnMes(mes));
+        System.out.println("Mes/es con más eventos "
+        + calendario.mesesConMasEventos());
 
-        // System.out.println();
-        // System.out.println("Evento de mayor duración: "
-            // + calendario.eventoMasLargo());
+        System.out.println();
+        System.out.println("Evento de mayor duración: "
+        + calendario.eventoMasLargo());
 
-        // System.out.println();
-        // Mes[] meses = {Mes.FEBRERO, Mes.MARZO, Mes.MAYO, Mes.JUNIO};
-        // int dia = 6;
-        // System.out.println("Cancelar eventos de " + Arrays.toString(meses));
-        // int cancelados = calendario.cancelarEventos(meses, dia);
-        // System.out.println("Se han cancelado " + cancelados +
-            // " eventos");
-        // System.out.println();
-        // System.out.println("Después de cancelar eventos ...");
-        // System.out.println(calendario);
+        System.out.println();
+        Mes[] meses = {Mes.FEBRERO, Mes.MARZO, Mes.MAYO, Mes.JUNIO};
+        int dia = 6;
+        System.out.println("Cancelar eventos de " + Arrays.toString(meses));
+        int cancelados = calendario.cancelarEventos(meses, dia);
+        System.out.println("Se han cancelado " + cancelados +
+        " eventos");
+        System.out.println();
+        System.out.println("Después de cancelar eventos ...");
+        System.out.println(calendario);
     }
 
 }
