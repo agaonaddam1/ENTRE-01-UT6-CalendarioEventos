@@ -1,3 +1,4 @@
+ 
 import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -18,6 +19,8 @@ import java.util.Iterator;
  * Solo aparecen los meses que incluyen algún evento
  * 
  * Las claves se recuperan en orden alfabético
+ * 
+ * @author Ander Gaona
  * 
  */
 public class CalendarioEventos {
