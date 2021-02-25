@@ -51,7 +51,7 @@ public class Evento {
      * 
      */
     private LocalDate formatearFecha(String fecha) {
-        String[] fechaA = fecha.split("/");
+        String[] fechaA = fecha.trim().split("/");
         int dia = Integer.parseInt(fechaA[0]);
         int mes = Integer.parseInt(fechaA[1]);
         int año = Integer.parseInt(fechaA[2]);
@@ -63,7 +63,7 @@ public class Evento {
      * 
      */
     private LocalTime formatearHora(String hora) {
-        String[] horaA = hora.split(":");
+        String[] horaA = hora.trim().split(":");
         int horas = Integer.parseInt(horaA[0]);
         int minutos = Integer.parseInt(horaA[1]);
         LocalTime horaNueva = LocalTime.of(horas, minutos);
